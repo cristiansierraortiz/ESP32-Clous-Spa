@@ -15,15 +15,15 @@
     {
       "type": "wokwi-led",
       "id": "led1",
-      "top": -50.48,
-      "left": -86.28,
+      "top": 60.54,
+      "left": -88.89,
       "attrs": { "color": "red" }
     },
     {
       "type": "wokwi-buzzer",
       "id": "bz1",
-      "top": -74.45,
-      "left": -156.52,
+      "top": -116.25,
+      "left": -123.87,
       "attrs": { "volume": "0.1" }
     },
     {
@@ -93,7 +93,8 @@
       "left": 199.56,
       "rotate": 270,
       "attrs": { "value": "220" }
-    }
+    },
+    { "type": "wokwi-servo", "id": "servo1", "top": 26.94, "left": 207.78, "attrs": {} }
   ],
   "connections": [
     [ "esp:TX0", "$serialMonitor:RX", "", [] ],
@@ -118,7 +119,10 @@
     [ "led2:C", "esp:GND.2", "black", [ "v22.61", "h-68.05" ] ],
     [ "led3:C", "esp:GND.2", "black", [ "v21.66", "h-93.26" ] ],
     [ "led4:C", "esp:GND.2", "black", [ "v22.09", "h-146.82" ] ],
-    [ "led5:C", "esp:GND.2", "black", [ "v25.11", "h-200.82" ] ]
+    [ "led5:C", "esp:GND.2", "black", [ "v25.11", "h-200.82" ] ],
+    [ "servo1:PWM", "esp:D23", "orange", [ "h-18.01", "v67.74", "h-48.01" ] ],
+    [ "servo1:GND", "esp:GND.2", "black", [ "h-24.76", "v-63.29", "h-168.79" ] ],
+    [ "servo1:V+", "esp:VIN", "red", [ "h-36.76", "v-64.54", "h-168.04" ] ]
   ],
   "dependencies": {}
 }
