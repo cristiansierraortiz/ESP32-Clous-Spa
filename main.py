@@ -7,10 +7,12 @@ import framebuf
 import ujson
 
 ##########################################
-####### Variables ESP32
+# Variables ESP32
 
+anchoOLED = 128
+altoOLED = 64
 i2c = I2C(0, scl=Pin(22), sda=Pin(21))
-oled = SSD1306_I2C(ancho, alto, i2c)
+oled = SSD1306_I2C(anchoOLED, altoOLED, i2c)
 led_Rojo = Pin(13, Pin.OUT)
 led_Verde = Pin(26, Pin.OUT)
 led_Amarillo = Pin(25, Pin.OUT)
@@ -18,17 +20,16 @@ led_Azul = Pin(33, Pin.OUT)
 led_Naranja = Pin(32, Pin.OUT)
 
 ##########################################
-####### Variables
+# Variables
 
-ancho = 128
-alto = 64
 valor = i2c.scan()
 validarConexionPantalla = str(valor)
 
 ##########################################
-####### Funciones
+# Funciones
 
-## funcion para importar logo en formato pbm
+# funcion para importar logo en formato pbm
+
 def buscar_icono(ruta):
     dibujo = open(ruta, "rb")
     dibujo.readline()
@@ -39,7 +40,8 @@ def buscar_icono(ruta):
     dibujo.close()
     return framebuf.FrameBuffer(icono, x, y, framebuf.MONO_HLSB)
 
-## funcion para mostrar logo en formato pbm
+# funcion para mostrar logo en formato pbm
+
 def mostrarLogo(logo):
     oled.blit(buscar_icono(logo), 0, 0)
     oled.show()
@@ -48,7 +50,8 @@ def mostrarLogo(logo):
     oled.show()
     time.sleep(1)
 
-## funcion para conectar la ESP32 a internet por WIFI
+# funcion para conectar la ESP32 a internet por WIFI
+
 def conectaWifi(red, password):
     global miRed
     miRed = network.WLAN(network.STA_IF)
@@ -62,7 +65,8 @@ def conectaWifi(red, password):
                 return False
     return True
 
-## funcion para mostrar mnesajes en la OLED
+# funcion para mostrar mnesajes en la OLED
+
 def mostrarOled(p1='', p2='', p3='', p4='', p5='', p6=''):
     oled.fill(0)
     oled.show()
@@ -76,7 +80,8 @@ def mostrarOled(p1='', p2='', p3='', p4='', p5='', p6=''):
     oled.show()
     time.sleep(5)
 
-## funcion para limpiar mnesajes en la OLED
+# funcion para limpiar mnesajes en la OLED
+
 def limpiarOled():
     time.sleep(5)
     oled.fill(1)
@@ -85,7 +90,8 @@ def limpiarOled():
     oled.fill(0)
     oled.show()
 
-## funcion para realizar peticiones HTTP (GET, POST, PUT, DELETE, etc)
+# funcion para realizar peticiones HTTP (GET, POST, PUT, DELETE, etc)
+
 def peticionHTTP(urlIn, param, peticion, qry='', qry2='', qry3=''):
     if peticion == 'GET':
         url = "https://clous-spa.fly.dev/api/v1/" + str(urlIn) + str(param)
@@ -101,7 +107,8 @@ def peticionHTTP(urlIn, param, peticion, qry='', qry2='', qry3=''):
         respuesta = urequests.get(url)
         return respuesta
 
-## funcion para procesar Cromoterapia
+# funcion para procesar Cromoterapia
+
 def procesoColor(color):
     if color == "Verde":
         led_Verde.value(1)
@@ -116,7 +123,8 @@ def procesoColor(color):
         time.sleep(2)
         mostrarOled('', '', 'Color', color, 'Activado!', '')
 
-## funcion para procesar Aromaterapia
+# funcion para procesar Aromaterapia
+
 def procesoAroma(aroma):
     if aroma == "Manzanilla":
         print("Se ha activado el aroma a Manzanilla")
@@ -129,7 +137,8 @@ def procesoAroma(aroma):
             oled.show()
             time.sleep(5)
 
-## funcion para procesar Musicoterapia
+# funcion para procesar Musicoterapia
+
 def procesoGeneroMusical(genero_musical):
     if genero_musical == "Instrumental":
         urlIn = "https://maker.ifttt.com/trigger/Instrumental/with/key/iJnBbtu46kBnwPyPZkyiMN6wM8uCvM4ZbL7zrZx7gun"
@@ -145,7 +154,8 @@ def procesoGeneroMusical(genero_musical):
             print("La canción no se pudo reproducir")
             mostrarOled('', '', 'Reproducion', 'Cancion', 'Fallida', '')
 
-## funcion para validar y procesar el estado de la cita del cliente
+# funcion para validar y procesar el estado de la cita del cliente
+
 def validarEstadoCita():
     mostrarOled('', 'Sesion', 'SPA', 'en', 'Curso', '')
     urlIn = "obtener-id-cita-cliente-reciente"
@@ -195,7 +205,8 @@ def validarEstadoCita():
                 limpiarOled()
                 time.sleep(1)
 
-## funcion para procesar la terapia
+# funcion para procesar la terapia
+
 def procesoTerapia(urlIn, param, peticion):
     mostrarOled('', '', 'Realizando', 'peticion', 'Espere...', '')
     respuesta = peticionHTTP(urlIn, param, peticion)
@@ -214,22 +225,25 @@ def procesoTerapia(urlIn, param, peticion):
     validarEstadoCita()
 
 
-## ("areandina/cisco.pbm") ruta y sitio de ubicación del directorio
+# ("areandina/cisco.pbm") ruta y sitio de ubicación del directorio
 logo = "prueba.txt"
 
 
 ##########################################
-####### Proceso General
+# Proceso General
 
-## realiza el saludo
+# realiza el saludo
+
 mostrarLogo(logo)
 mostrarOled('', '', 'Bienvenido', 'Clous', 'Spa', '')
 
-## valida conexión de la OLED
+# valida conexión de la OLED
+
 if validarConexionPantalla == "[60]":
     print("Pantalla conectada correctamente")
 
-    ## se conecta a la red WIFI
+    # se conecta a la red WIFI
+    
     if conectaWifi("Wokwi-GUEST", ""):
         print("Conexión exitosa!")
         print('Datos de la red (IP/netmask/gw/DNS):', miRed.ifconfig())
@@ -251,13 +265,15 @@ if validarConexionPantalla == "[60]":
             nombre_cliente = datos['datos'][0]['nombres_cliente']
             apellido_cliente = datos['datos'][0]['primer_apellido_cliente']
 
-            ## muestra el nombre del cliente
+            # muestra el nombre del cliente
+            
             time.sleep(1)
             time.sleep(2)
             mostrarOled('', '', 'Bienvenid@',
                         nombre_cliente, apellido_cliente, '')
 
-            ## captura los datos del oximetro
+            # captura los datos del oximetro
+            
             SpO2 = 95
             BPM = 66
 
@@ -265,12 +281,14 @@ if validarConexionPantalla == "[60]":
                 print("No hay datos del sensor")
                 mostrarOled('', 'No', 'Hay', 'Datos', 'Sensor', '')
             else:
-                ## muestra datos del sensor en la OLED
+                # muestra datos del sensor en la OLED
+                
                 ST = "Sat:" + str(SpO2) + " SpO2"
                 RC = "Rit:" + str(BPM) + " BPM"
                 mostrarOled('', 'Datos', 'Sensor', ST, RC, '')
 
-                ## inserta datos del sensor en la BD
+                # inserta datos del sensor en la BD
+                
                 urlIn = "insertar-datos-cita-cliente?"
                 mostrarOled('', '', 'Realizando', 'peticion', 'Espere...', '')
                 respuesta = peticionHTTP(
@@ -286,7 +304,8 @@ if validarConexionPantalla == "[60]":
                     mostrarOled('', 'Datos', 'No', 'insertados',
                                 'favor', 'validar!')
 
-                ## valida los datos del sensor y aplica la terapia configurada, segun BPM
+                # valida los datos del sensor y aplica la terapia configurada, segun BPM
+                
                 if BPM <= 70:
                     print("Ritmo bajo")
                     mostrarOled('', '', 'Resultado', 'Ritmo bajo', '', '')
@@ -310,8 +329,6 @@ if validarConexionPantalla == "[60]":
                     param = 3
 
                     procesoTerapia(urlIn, param, 'GET')
-                    # tone(buzzerPin, 31);
-                    # delay(1000);
 
         else:
             print("No existen citas pendientes para hoy")
