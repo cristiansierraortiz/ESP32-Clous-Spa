@@ -47,7 +47,6 @@ def muestra(self):
 
     intervalos = [1, 2, 3]
     for i in intervalos:
-      utime.sleep(3)
       sensor.check()
       if sensor.available():
         red_reading = sensor.pop_red_from_storage()
@@ -56,11 +55,11 @@ def muestra(self):
         f_conversion = 60/17500
         dato = (ir_reading*f_conversion)*1.5
         self.datos = dato  # ("BPM",dato)
-        utime.sleep(8)
+        utime.sleep(1)
 
         dato2 = (red_reading*f_conversion)*1.8
         self.datos2 = dato2  # ("SpO2",dato2)
-        utime.sleep(8)
+        utime.sleep(1)
 
         if compute_frequency:
           if ticks_diff(ticks_us(), t_start) >= 999999:

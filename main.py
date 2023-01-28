@@ -97,7 +97,7 @@ def procesoLED(nomLED, parEncApg):
 # funcion para accionar el ServoMotor
 
 
-def accionarServoMotor(ang1, ang2, ang3, servo):
+def accionarServoMotor(ang1, ang2, ang3, servoParam):
     angulos = [ang1, ang2, ang3]
 
     def map_s(x):
@@ -105,7 +105,7 @@ def accionarServoMotor(ang1, ang2, ang3, servo):
         return int((x - 0) * (2400000 - 500000) / (180 - 0) + 500000)
     for i in angulos:
         m = map_s(i)
-        servo.duty_ns(m)
+        servoParam.duty_ns(m)
         time.sleep(2)
 
 # funcion para realizar peticiones HTTP (GET, POST, PUT, DELETE, etc)
@@ -156,25 +156,23 @@ def procesoAroma(aroma):
         mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
         intervalos = [1, 2, 3]
         for i in intervalos:
-            print("Disparo " + str(i) + " accionado correctamente")
-            mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
-            time.sleep(2)
             accionarServoMotor(0, 180, 0, servo)
+            mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
+            print("Disparo " + str(i) + " accionado correctamente")
             oled.fill(0)
             oled.show()
-            time.sleep(5)
+            time.sleep(2)
     elif aroma == "Canela":
         print("Se ha activado el aroma a Canela")
         mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
         intervalos = [1, 2, 3]
         for i in intervalos:
-            print("Disparo " + str(i) + " accionado correctamente")
-            mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
-            time.sleep(2)
             accionarServoMotor(0, 180, 0, servo2)
+            mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
+            print("Disparo " + str(i) + " accionado correctamente")
             oled.fill(0)
             oled.show()
-            time.sleep(5)
+            time.sleep(2)
 
 # funcion para procesar Musicoterapia
 
@@ -310,8 +308,6 @@ if validarConexionPantalla == "[60]":
 
             # muestra el nombre del cliente
 
-            time.sleep(1)
-            time.sleep(2)
             mostrarOled('', '', 'Bienvenid@',
                         nombre_cliente, apellido_cliente, '')
 
@@ -326,7 +322,9 @@ if validarConexionPantalla == "[60]":
             mostrarOled('', '', 'Puede', 'Levantar', 'Dedo', '')
 
             BPM = oximetro.datos
+            print("El valor final de BPM es: " + BPM)
             SpO2 = oximetro.datos2
+            print("El valor final de SpO2 es: " + SpO2)
 
             if SpO2 == 0 or BPM == 0:
                 print("No hay datos del sensor")
