@@ -5,6 +5,8 @@ import time
 import urequests
 import framebuf
 import ujson
+import pulsometro
+from pulsometro import Pulso
 
 ##########################################
 # Variables ESP32
@@ -18,7 +20,8 @@ led_Verde = Pin(26, Pin.OUT)
 led_Amarillo = Pin(25, Pin.OUT)
 led_Azul = Pin(33, Pin.OUT)
 led_Naranja = Pin(32, Pin.OUT)
-servo= PWM(Pin(23), freq=50)
+servo = PWM(Pin(23), freq=50)
+servo2 = PWM(Pin(14), freq=50)
 
 ##########################################
 # Variables
@@ -41,17 +44,6 @@ def buscar_icono(ruta):
     icono = bytearray(dibujo.read())
     dibujo.close()
     return framebuf.FrameBuffer(icono, x, y, framebuf.MONO_HLSB)
-
-# funcion para mostrar logo en formato pbm
-
-
-def mostrarLogo(logo):
-    oled.blit(buscar_icono(logo), 0, 0)
-    oled.show()
-    time.sleep(5)
-    oled.fill(0)
-    oled.show()
-    time.sleep(1)
 
 # funcion para conectar la ESP32 a internet por WIFI
 
@@ -105,16 +97,14 @@ def procesoLED(nomLED, parEncApg):
 # funcion para accionar el ServoMotor
 
 
-def accionarServoMotor(ang1, ang2, ang3):
-    angulos=[ang1, ang2, ang3]
+def accionarServoMotor(ang1, ang2, ang3, servo):
+    angulos = [ang1, ang2, ang3]
+
     def map_s(x):
-        return int((x - 0) * (2400000- 500000) / (180 - 0) + 500000) # v1.19 --duty_ns() --0 y 1_000_000_000
-    '''for i in range(0,180):
-        m=map_s(i)
-        servo.duty_ns(m)
-        sleep_ms(10)'''
+        # v1.19 --duty_ns() --0 y 1_000_000_000
+        return int((x - 0) * (2400000 - 500000) / (180 - 0) + 500000)
     for i in angulos:
-        m=map_s(i)
+        m = map_s(i)
         servo.duty_ns(m)
         time.sleep(2)
 
@@ -152,6 +142,10 @@ def procesoColor(color):
         procesoLED(led_Amarillo, 1)
         time.sleep(2)
         mostrarOled('', '', 'Color', color, 'Activado!', '')
+    elif color == "Naranja":
+        procesoLED(led_Naranja, 1)
+        time.sleep(2)
+        mostrarOled('', '', 'Color', color, 'Activado!', '')
 
 # funcion para procesar Aromaterapia
 
@@ -160,12 +154,24 @@ def procesoAroma(aroma):
     if aroma == "Manzanilla":
         print("Se ha activado el aroma a Manzanilla")
         mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
-        intervalos = [1, 2, 3, 4, 5]
+        intervalos = [1, 2, 3]
         for i in intervalos:
             print("Disparo " + str(i) + " accionado correctamente")
             mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
             time.sleep(2)
-            accionarServoMotor(0, 180, 0)
+            accionarServoMotor(0, 180, 0, servo)
+            oled.fill(0)
+            oled.show()
+            time.sleep(5)
+    elif aroma == "Canela":
+        print("Se ha activado el aroma a Canela")
+        mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
+        intervalos = [1, 2, 3]
+        for i in intervalos:
+            print("Disparo " + str(i) + " accionado correctamente")
+            mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
+            time.sleep(2)
+            accionarServoMotor(0, 180, 0, servo2)
             oled.fill(0)
             oled.show()
             time.sleep(5)
@@ -267,16 +273,11 @@ def procesoTerapia(urlIn, param, peticion):
     validarEstadoCita()
 
 
-# ("areandina/cisco.pbm") ruta y sitio de ubicación del directorio
-logo = "prueba.txt"
-
-
 ##########################################
 # Proceso General
 
 # realiza el saludo
 
-mostrarLogo(logo)
 mostrarOled('', '', 'Bienvenido', 'Clous', 'Spa', '')
 
 # valida conexión de la OLED
@@ -286,7 +287,7 @@ if validarConexionPantalla == "[60]":
 
     # se conecta a la red WIFI
 
-    if conectaWifi("Wokwi-GUEST", ""):
+    if conectaWifi("Marcela", "12345678"):
         print("Conexión exitosa!")
         print('Datos de la red (IP/netmask/gw/DNS):', miRed.ifconfig())
         mostrarOled('', '', 'Conexion', 'Exitosa!', 'WIFI', '')
@@ -316,8 +317,16 @@ if validarConexionPantalla == "[60]":
 
             # captura los datos del oximetro
 
-            SpO2 = 95
-            BPM = 66
+            mostrarOled('', '', 'Leyendo', 'Datos', 'Sensor', '')
+            oximetro = Pulso()
+            mostrarOled('', 'Coloca', 'Dedo', 'en el', 'Sensor', '')
+            mostrarOled('Favor', 'No', 'Levantar',
+                        'Dedo', 'Leyendo', 'Datos...')
+            oximetro.muestra()
+            mostrarOled('', '', 'Puede', 'Levantar', 'Dedo', '')
+
+            BPM = oximetro.datos
+            SpO2 = oximetro.datos2
 
             if SpO2 == 0 or BPM == 0:
                 print("No hay datos del sensor")
@@ -348,7 +357,7 @@ if validarConexionPantalla == "[60]":
 
                 # valida los datos del sensor y aplica la terapia configurada, segun BPM
 
-                if BPM <= 70:
+                if BPM <= 90:
                     print("Ritmo bajo")
                     mostrarOled('', '', 'Resultado', 'Ritmo bajo', '', '')
                     urlIn = "obtener-terapia/"
@@ -356,7 +365,7 @@ if validarConexionPantalla == "[60]":
 
                     procesoTerapia(urlIn, param, 'GET')
 
-                elif BPM >= 70 and BPM <= 75:
+                elif BPM >= 90 and BPM <= 95:
                     print("Ritmo medio")
                     mostrarOled('', '', 'Resultado', 'Ritmo medio', '', '')
                     urlIn = "obtener-terapia/"
