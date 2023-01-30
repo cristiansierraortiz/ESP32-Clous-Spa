@@ -74,5 +74,3 @@ class Pulso():
           print("El valor de Temp es: " + str(dato3))
           print("Intento " + str(i) + " realizado")
 
-      print("El valor de BPM final es: " + str(dato))
-      print("El valor de SpO2 final es: " + str(dato2))

@@ -112,7 +112,7 @@ def accionarServoMotor(ang1, ang2, ang3, servoParam):
         for i in angulos:
             m = map_s(i)
             servo.duty_ns(m)
-            time.sleep(2)
+            time.sleep(1)
     elif servoParam == 2:
         servo2 = PWM(Pin(14), freq=50)
         angulos = [ang1, ang2, ang3]
@@ -122,7 +122,7 @@ def accionarServoMotor(ang1, ang2, ang3, servoParam):
         for i in angulos:
             m = map_s(i)
             servo2.duty_ns(m)
-            time.sleep(2)
+            time.sleep(1)
 
 
 # funcion para realizar peticiones HTTP (GET, POST, PUT, DELETE, etc)
@@ -180,7 +180,7 @@ def procesoAroma(aroma):
             print("Disparo " + str(i) + " accionado correctamente")
             oled.fill(0)
             oled.show()
-            time.sleep(2)
+            time.sleep(1)
     elif aroma == "Canela":
         print("Se ha activado el aroma a Canela")
         mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
@@ -191,7 +191,7 @@ def procesoAroma(aroma):
             print("Disparo " + str(i) + " accionado correctamente")
             oled.fill(0)
             oled.show()
-            time.sleep(2)
+            time.sleep(1)
 
 # funcion para procesar Musicoterapia
 # =======================================================================
@@ -365,7 +365,7 @@ if validarConexionPantalla == "[60]":
                 urlIn = "insertar-datos-cita-cliente?"
                 mostrarOled('', '', 'Realizando', 'peticion', 'Espere...', '')
                 respuesta = peticionHTTP(
-                    urlIn, '', 'POST', id_cliente, SpO2, BPM)
+                    urlIn, '', 'POST', id_cliente, int(SpO2), int(BPM))
                 code = respuesta.status_code
                 respuesta.close()
                 print(respuesta.status_code)
