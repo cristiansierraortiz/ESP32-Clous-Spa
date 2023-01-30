@@ -199,7 +199,7 @@ def procesoAroma(aroma):
 
 def procesoGeneroMusical(genero_musical):
     if genero_musical == "Instrumental":
-        urlIn = "https://maker.ifttt.com/trigger/Instrumental/with/key/iJnBbtu46kBnwPyPZkyiMN6wM8uCvM4ZbL7zrZx7gun"
+        urlIn = "https://maker.ifttt.com/trigger/Instrumental/with/key/bYgdF-b0LXlI1hUQl-l9N0"
         mostrarOled('', '', 'Realizando', 'peticion', 'Espere...', '')
         respuesta = peticionHTTP(urlIn, '', 'EXTERNO')
         code = respuesta.status_code
@@ -245,7 +245,7 @@ def validarEstadoCita():
         if estado_cita_proxima == True:
             respuesta.close()
             mostrarOled('', '', 'Sesion', 'Finalizada', '', '')
-            urlIn = "https://maker.ifttt.com/trigger/encuesta/with/key/iJnBbtu46kBnwPyPZkyiMN6wM8uCvM4ZbL7zrZx7gun?"
+            urlIn = "https://maker.ifttt.com/trigger/Encuesta/with/key/cepUlBpq1XyHvLxcmpwVIi"
             mostrarOled('', '', 'Realizando', 'peticion', 'Espere...', '')
             respuesta = peticionHTTP(urlIn, '', 'EXTERNO')
             code = respuesta.status_code
