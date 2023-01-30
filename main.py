@@ -285,7 +285,7 @@ if validarConexionPantalla == "[60]":
 
     # se conecta a la red WIFI
 
-    if conectaWifi("Marcela", "12345678"):
+    if conectaWifi("CASA 300-2.4", "Casa300*"):
         print("Conexión exitosa!")
         print('Datos de la red (IP/netmask/gw/DNS):', miRed.ifconfig())
         mostrarOled('', '', 'Conexion', 'Exitosa!', 'WIFI', '')
