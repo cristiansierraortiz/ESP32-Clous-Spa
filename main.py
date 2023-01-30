@@ -245,7 +245,7 @@ def validarEstadoCita():
         if estado_cita_proxima == True:
             respuesta.close()
             mostrarOled('', '', 'Sesion', 'Finalizada', '', '')
-            urlIn = "https://maker.ifttt.com/trigger/Encuesta/with/key/cepUlBpq1XyHvLxcmpwVIi"
+            urlIn = "https://maker.ifttt.com/trigger/Encuesta/with/key/bYgdF-b0LXlI1hUQl-l9N0"
             mostrarOled('', '', 'Realizando', 'peticion', 'Espere...', '')
             respuesta = peticionHTTP(urlIn, '', 'EXTERNO')
             code = respuesta.status_code
