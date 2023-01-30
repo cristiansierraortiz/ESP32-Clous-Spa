@@ -346,9 +346,9 @@ if validarConexionPantalla == "[60]":
             mostrarOled('', '', 'Puede', 'Levantar', 'Dedo', '')
 
             BPM = oximetro.datos
-            print("El valor final de BPM es: " + BPM)
+            print("El valor final de BPM es: " + str(BPM))
             SpO2 = oximetro.datos2
-            print("El valor final de SpO2 es: " + SpO2)
+            print("El valor final de SpO2 es: " + str(SpO2))
 
             if SpO2 == 0 or BPM == 0:
                 print("No hay datos del sensor")
