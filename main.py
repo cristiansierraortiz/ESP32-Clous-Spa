@@ -20,11 +20,10 @@ led_Verde = Pin(26, Pin.OUT)
 led_Amarillo = Pin(25, Pin.OUT)
 led_Azul = Pin(33, Pin.OUT)
 led_Naranja = Pin(32, Pin.OUT)
-servo = PWM(Pin(23), freq=50)
-servo2 = PWM(Pin(14), freq=50)
 
 ##########################################
 # Variables
+# =======================================================================
 
 valor = i2c.scan()
 validarConexionPantalla = str(valor)
@@ -33,6 +32,7 @@ validarConexionPantalla = str(valor)
 # Funciones
 
 # funcion para importar logo en formato pbm
+# =======================================================================
 
 
 def buscar_icono(ruta):
@@ -46,6 +46,7 @@ def buscar_icono(ruta):
     return framebuf.FrameBuffer(icono, x, y, framebuf.MONO_HLSB)
 
 # funcion para conectar la ESP32 a internet por WIFI
+# =======================================================================
 
 
 def conectaWifi(red, password):
@@ -62,6 +63,7 @@ def conectaWifi(red, password):
     return True
 
 # funcion para mostrar mnesajes en la OLED
+# =======================================================================
 
 
 def mostrarOled(p1='', p2='', p3='', p4='', p5='', p6=''):
@@ -78,6 +80,7 @@ def mostrarOled(p1='', p2='', p3='', p4='', p5='', p6=''):
     time.sleep(5)
 
 # funcion para limpiar mnesajes en la OLED
+# =======================================================================
 
 
 def limpiarOled():
@@ -89,27 +92,41 @@ def limpiarOled():
     oled.show()
 
 # funcion para encender / apagar LED
+# =======================================================================
 
 
 def procesoLED(nomLED, parEncApg):
     nomLED.value(parEncApg)
 
 # funcion para accionar el ServoMotor
+# =======================================================================
 
 
 def accionarServoMotor(ang1, ang2, ang3, servoParam):
-    angulos = [ang1, ang2, ang3]
+    if servoParam == 1:
+        servo = PWM(Pin(23), freq=50)
+        angulos = [ang1, ang2, ang3]
 
-    def map_s(x):
-        # v1.19 --duty_ns() --0 y 1_000_000_000
-        return int((x - 0) * (2400000 - 500000) / (180 - 0) + 500000)
-    for i in angulos:
-        m = map_s(i)
-        servoParam.duty_ns(m)
-        time.sleep(2)
+        def map_s(x):
+            return int((x - 0) * (2400000 - 500000) / (180 - 0) + 500000)
+        for i in angulos:
+            m = map_s(i)
+            servo.duty_ns(m)
+            time.sleep(2)
+    elif servoParam == 2:
+        servo2 = PWM(Pin(14), freq=50)
+        angulos = [ang1, ang2, ang3]
+
+        def map_s(x):
+            return int((x - 0) * (2400000 - 500000) / (180 - 0) + 500000)
+        for i in angulos:
+            m = map_s(i)
+            servo2.duty_ns(m)
+            time.sleep(2)
+
 
 # funcion para realizar peticiones HTTP (GET, POST, PUT, DELETE, etc)
-
+# =======================================================================
 
 def peticionHTTP(urlIn, param, peticion, qry='', qry2='', qry3=''):
     if peticion == 'GET':
@@ -127,6 +144,7 @@ def peticionHTTP(urlIn, param, peticion, qry='', qry2='', qry3=''):
         return respuesta
 
 # funcion para procesar Cromoterapia
+# =======================================================================
 
 
 def procesoColor(color):
@@ -148,6 +166,7 @@ def procesoColor(color):
         mostrarOled('', '', 'Color', color, 'Activado!', '')
 
 # funcion para procesar Aromaterapia
+# =======================================================================
 
 
 def procesoAroma(aroma):
@@ -156,7 +175,7 @@ def procesoAroma(aroma):
         mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
         intervalos = [1, 2, 3]
         for i in intervalos:
-            accionarServoMotor(0, 180, 0, servo)
+            accionarServoMotor(0, 180, 0, 1)
             mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
             print("Disparo " + str(i) + " accionado correctamente")
             oled.fill(0)
@@ -167,7 +186,7 @@ def procesoAroma(aroma):
         mostrarOled('', '', 'Aroma', aroma, 'Activado!', '')
         intervalos = [1, 2, 3]
         for i in intervalos:
-            accionarServoMotor(0, 180, 0, servo2)
+            accionarServoMotor(0, 180, 0, 2)
             mostrarOled('', 'Disparo', str(i), 'Aroma', 'Accionado', '')
             print("Disparo " + str(i) + " accionado correctamente")
             oled.fill(0)
@@ -175,6 +194,7 @@ def procesoAroma(aroma):
             time.sleep(2)
 
 # funcion para procesar Musicoterapia
+# =======================================================================
 
 
 def procesoGeneroMusical(genero_musical):
@@ -193,6 +213,7 @@ def procesoGeneroMusical(genero_musical):
             mostrarOled('', '', 'Reproducion', 'Cancion', 'Fallida', '')
 
 # funcion para validar y procesar el estado de la cita del cliente
+# =======================================================================
 
 
 def validarEstadoCita():
@@ -251,6 +272,7 @@ def validarEstadoCita():
                 time.sleep(1)
 
 # funcion para procesar la terapia
+# =======================================================================
 
 
 def procesoTerapia(urlIn, param, peticion):
@@ -273,8 +295,10 @@ def procesoTerapia(urlIn, param, peticion):
 
 ##########################################
 # Proceso General
+# =======================================================================
 
 # realiza el saludo
+
 
 mostrarOled('', '', 'Bienvenido', 'Clous', 'Spa', '')
 
