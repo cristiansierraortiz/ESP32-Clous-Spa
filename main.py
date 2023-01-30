@@ -130,11 +130,11 @@ def accionarServoMotor(ang1, ang2, ang3, servoParam):
 
 def peticionHTTP(urlIn, param, peticion, qry='', qry2='', qry3=''):
     if peticion == 'GET':
-        url = "https://clous-spa.fly.dev/api/v1/" + str(urlIn) + str(param)
+        url = "https://clous-spa-dev.fly.dev/api/v1/" + str(urlIn) + str(param)
         respuesta = urequests.get(url)
         return respuesta
     elif peticion == 'POST':
-        url = "https://clous-spa.fly.dev/api/v1/" + str(urlIn)
+        url = "https://clous-spa-dev.fly.dev/api/v1/" + str(urlIn)
         respuesta = urequests.post(
             url+"idCliente="+str(qry)+"&saturacion="+str(qry2)+"&ritmoCardiaco="+str(qry3))
         return respuesta
